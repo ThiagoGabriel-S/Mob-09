@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CRUD Alunos (JSON)</title>
+</head>
+
+<body>
+
+    <h1>Alunos</h1>
+
+    <input id="nome" placeholder="Nome">
+    <input id="email" placeholder="E-mail">
+    <input id="idade" type="number" placeholder="Idade">
+    <button onclick="salvar()">Salvar</button>
+    <button onclick="exportar()">💾 Exportar</button>
+    <input type="file" accept=".json" onchange="importar(event)">
+    <button onclick="resetar()">🔄 Resetar</button>
+
+    <hr>
+
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Idade</th>
+            <th>Ações</th>
+        </tr>
+        <tbody id="lista"></tbody>
+    </table>
+
+    <script>
+        let alunos = [];
+        let idEditando = null;
+        let proximoId = 1;
+        const CHAVE = "alunos_deg3";
+
+        function persistir() {
+            localStorage.setItem(CHAVE, JSON.stringify(alunos));
+        }
+
+        function listar() {
+            const lista = document.getElementById("lista");
+            lista.innerHTML = "";
+            alunos.forEach(a => {
+                lista.innerHTML += `<tr>
+            <td>${a.id}</td>
+            <td>${a.nome}</td>
+            <td>${a.email}</td>
+            <!-- Renderiza idade ou traço caso vazio -->
+            <td>${a.idade || "-"}</td>
+            <td><button disabled>Aguardando Passo 4</button></td></tr>`;
+            });
+        }
+
+        function salvar() {
+            const nome = document.getElementById("nome");
+            const email = document.getElementById("email");
+            const idade = document.getElementById("idade");
+
+            if (!nome.value) return alert("Preencha o nome!");
+
+            alunos.push({
+                id: proximoId++,
+                nome: nome.value,
+                email: email.value,
+                idade: idade.value
+            });
+
+            nome.value = email.value = idade.value = "";
+            persistir();
+            listar();
+        }
+
+        listar();
+    </script>
+</body>
+</html>
